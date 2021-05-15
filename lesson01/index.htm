@@ -1,0 +1,35 @@
+<html>
+    <head>
+        <meta charset="utf-8"/>
+     
+        <link rel="stylesheet" type="text/css" href="../asset/css/style.css" />
+    </head>
+    <body>
+        <h1 class="title over">Lesson 01 : Just get GL Context</h1>
+        <p class="over"> This background is gray from gl. you check context in console</p>
+        <canvas id="main-screen"></canvas>
+    </body>
+    <script type="module">
+        
+        // ---------------------------------------------------------
+
+        import { initGL } from '../lib/zglp/zglp.js'
+
+        // ---------------------------------------------------------
+
+        let gl = initGL('main-screen',main)
+
+        window.onload = gl
+
+        // ---------------------------------------------------------
+        function main(gl)
+        {
+            // Set clear color to gray, fully opaque
+            gl.clearColor(0.6, 0.6, 0.6, 1.0)
+
+            // Clear the color buffer with specified clear color
+            gl.clear(gl.COLOR_BUFFER_BIT)
+        }
+
+    </script>
+</html>
