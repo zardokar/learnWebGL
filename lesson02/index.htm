@@ -1,0 +1,155 @@
+<html>
+    <head>
+        <meta charset="utf-8"/>
+     
+        <link rel="stylesheet" type="text/css" href="../asset/css/style.css" />
+    </head>
+    <body>
+        <h1 class="title over">Lesson 02 : First Tri </h1>
+        <p class="over"> 
+            Step of drawing triangle is : <br/>
+            - create vertex data position : Array of vector 3 (x,y,z) <br/>
+            - create buffer for vertex data <br/>
+            - load vertex data array to buffer <br/>
+            - create vertex shader (GLSL) and compile <br/>
+            - create fragment shader (GLSL) and compile <br/>
+            - create program <br/>
+            - attach vertex and fragment shader to program <br/>
+            - enable shader attribute <br/>
+            - draw <br/>
+        </p>
+        <canvas id="main-screen"></canvas>
+    </body>
+    <script type="module">
+        // -----------------------------------------------------
+
+        import gfunc from '../lib/gfunc.js'
+        
+        // ---------------------------------------------------------
+
+        let canvas      = document.getElementById('main-screen')
+
+        let gl          = canvas.getContext("webgl2")
+
+        // Only continue if WebGL is available and working
+        if (gfunc.exist(gl) !== true) {
+            alert("Unable to initialize WebGL2. Your browser or machine may not support it.");
+        }
+
+        // ---------------------------------------------------------
+
+        main(gl)
+
+        // ---------------------------------------------------------
+        function main(gl)
+        {
+            let vertex = createVertexData()
+            let buffer = createBuffer(gl)
+
+            loadVertexDatatoBuffer(gl,buffer,vertex)
+
+            let vertshade = createVertexShader(gl,'vec3','position')
+            let fragshade = createFragmentShader(gl)
+
+            let program   = createProgram(gl)
+
+            attachShadertoProgram(gl,program,vertshade,fragshade)
+            enableShaderAttributes(gl,program,'position')
+
+            draw(gl)
+        }
+
+        // ---------------------------------------------------------
+        function createVertexData()
+        {            
+                     // x, y, z
+            return [
+                        0, 0, 0,
+                        0, 1, 0,    
+                        1, 0, 0
+                   ]
+        }
+
+        // ---------------------------------------------------------
+        function createBuffer(gl)
+        {
+            return gl.createBuffer()
+        }
+
+        // ---------------------------------------------------------
+        function loadVertexDatatoBuffer(gl,buffer,vertex,BufferDataSize = Float32Array, usage)
+        {
+            usage = gfunc.exist(usage) ? usage : gl.STATIC_COPY 
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
+            gl.bufferData(gl.ARRAY_BUFFER, new BufferDataSize(vertex) , usage)
+        }
+
+        // ---------------------------------------------------------
+        function createVertexShader(gl,vartype = 'vec3',varname = 'position')
+        {
+            const DefaultSource = ` 
+                attribute ${vartype} ${varname};
+
+                void main(){
+                    gl_Position = vec4(position , 1);
+                }
+            `
+            let vertexshader = gl.createShader(gl.VERTEX_SHADER)
+
+            gl.shaderSource(vertexshader, DefaultSource)
+            gl.compileShader(vertexshader)
+
+            return vertexshader
+        }
+
+        // ---------------------------------------------------------
+        function createFragmentShader(gl,sourcestr)
+        {
+            const DefaultSource = ` 
+                void main(){
+                    gl_FragColor = vec4( 0.9, 0.4, 0.6, 1 );
+                }
+            `
+            let fragmentshader = gl.createShader(gl.FRAGMENT_SHADER)
+
+            gl.shaderSource(fragmentshader, DefaultSource)
+            gl.compileShader(fragmentshader)
+
+            return fragmentshader
+        }
+
+        // ---------------------------------------------------------
+        function createProgram(gl)
+        {
+            return gl.createProgram()
+        }
+
+        // ---------------------------------------------------------
+        function attachShadertoProgram(gl,program,vertexshader,fragmentshader)
+        {
+            gl.attachShader(program,vertexshader)
+            gl.attachShader(program,fragmentshader)
+            gl.linkProgram(program)
+        }
+
+        // ---------------------------------------------------------
+        function enableShaderAttributes(gl,program,name='position')
+        {
+            let positionLocation = gl.getAttribLocation(program,name)
+            gl.enableVertexAttribArray(positionLocation)
+            gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0 )
+            gl.useProgram(program)
+
+            return positionLocation
+        }
+
+        // ---------------------------------------------------------
+        function draw(gl)
+        {
+            gl.drawArrays( gl.TRIANGLE_FAN , 0, 3 )
+        }
+
+
+    </script>
+</html>
