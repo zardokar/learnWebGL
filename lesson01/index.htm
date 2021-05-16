@@ -10,16 +10,24 @@
         <canvas id="main-screen"></canvas>
     </body>
     <script type="module">
+        // -----------------------------------------------------
+
+        import gfunc from '../lib/gfunc.js'
         
         // ---------------------------------------------------------
 
-        import { initGL } from '../lib/zglp/zglp.js'
+        let canvas      = document.getElementById('main-screen')
+
+        let gl          = canvas.getContext("webgl2")
+
+        // Only continue if WebGL is available and working
+        if (gfunc.exist(gl) !== true) {
+            alert("Unable to initialize WebGL2. Your browser or machine may not support it.");
+        }
 
         // ---------------------------------------------------------
 
-        let gl = initGL('main-screen',main)
-
-        window.onload = gl
+        main(gl)
 
         // ---------------------------------------------------------
         function main(gl)
